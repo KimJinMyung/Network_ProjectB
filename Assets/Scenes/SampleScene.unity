@@ -354,6 +354,7 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 1734718686794375662, guid: fa5e034d6b0a37a4197958ffc6d05030, type: 3}
+  - {fileID: 2588953817491944160, guid: 3dfb83019e079aa4f9d680c4cb54ae7b, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -603,6 +604,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameMap: {fileID: 1880785588}
+  _Bullet:
+  - {fileID: 1734718686794375662, guid: fa5e034d6b0a37a4197958ffc6d05030, type: 3}
+  - {fileID: 2588953817491944160, guid: 3dfb83019e079aa4f9d680c4cb54ae7b, type: 3}
 --- !u!4 &1961179559
 Transform:
   m_ObjectHideFlags: 0

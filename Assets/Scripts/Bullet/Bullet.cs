@@ -7,30 +7,27 @@ using UnityEngine;
 public class Bullet : NetworkBehaviour
 {
     [SerializeField] private float Speed = 500f;
+    [SerializeField] 
+    protected int ATKPower;
 
-    private Rigidbody2D rb;
+    public int GetATKPowerValue {  get { return ATKPower; } }
+
+    protected Rigidbody2D rb;
 
     [SyncVar]
-    private NetworkIdentity owner;
+    protected NetworkIdentity owner;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Start()
+    protected virtual void Start()
     {
+        SetATKPower();
         //transform.position = transform.up * Speed * Time.deltaTime;
         rb.AddForce(transform.up * Speed, ForceMode2D.Impulse);
         Invoke(nameof(DestorySelf), 3f);
-    }
-
-    [Server]
-    private void DestorySelf()
-    {
-        //gameObject.SetActive(false);
-        //CommandDestorySelf();
-        NetworkServer.Destroy(this.gameObject);
     }
 
     public void SetOwner(NetworkConnectionToClient conn)
@@ -38,27 +35,27 @@ public class Bullet : NetworkBehaviour
         owner = conn.identity;
     }
 
-    //[Command]
-    //private void CommandDestorySelf()
-    //{
-    //    //gameObject.SetActive(false);
-    //    NetworkServer.Destroy(this.gameObject);
-    //    RpcDestorySelf();
-    //}
+    protected virtual void SetATKPower()
+    {
+        ATKPower = 1;
+    }
 
-    //[ClientRpc]
-    //private void RpcDestorySelf()
-    //{NetworkServer.Destroy(this.gameObject);
-    //}
+    [Server]
+    protected virtual void DestorySelf()
+    {
+        //gameObject.SetActive(false);
+        //CommandDestorySelf();
+        NetworkServer.Destroy(this.gameObject);
+    }
 
     [ServerCallback]    //외부에서 트리거 발동 서버에서 처리
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected void OnTriggerEnter2D(Collider2D collision)
     {
         //if (collision.gameObject.GetComponent<NetworkConnectionToClient>().identity == owner) return;
         if (collision.CompareTag("Player"))
         {
             if(collision.GetComponent<NetworkIdentity>() == owner) return;
-            collision.GetComponent<Player>().Hurt(1);
+            collision.GetComponent<Player>().Hurt(ATKPower);
             DestorySelf();
         }
     }

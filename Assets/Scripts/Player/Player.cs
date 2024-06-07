@@ -9,8 +9,12 @@ public class Player : NetworkBehaviour
     [SerializeField] private float Speed = 3f;
 
     [SerializeField] private Transform _attackPos;
-    [SerializeField] private GameObject _Bullet;
     [SerializeField] private int _HP = 5;
+
+    [SerializeField]
+    [SyncVar]
+    private int Power;
+
     private Vector2 _mousePos;
     private float _angle;
 
@@ -56,8 +60,7 @@ public class Player : NetworkBehaviour
     [Command]
     private void CommandAttack()
     {
-        //오브젝트 풀링 예정
-        GameObject bullet = Instantiate(_Bullet, _attackPos.position, _attackPos.rotation);
+        GameObject bullet = Instantiate(GameManager.Instance.Bullet[Power-1], _attackPos.position, _attackPos.rotation);
         bullet.GetComponent<Bullet>().SetOwner(this.connectionToClient);
         NetworkServer.Spawn(bullet);
 

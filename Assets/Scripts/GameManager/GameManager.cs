@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -12,6 +13,9 @@ public class GameManager : MonoBehaviour
     }
 
     [SerializeField] private GameObject GameMap;
+    [SerializeField] private List<GameObject> _Bullet;
+
+    public List<GameObject> Bullet { get { return _Bullet; } }
 
     private Collider2D mapSize;
 
