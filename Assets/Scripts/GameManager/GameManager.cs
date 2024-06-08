@@ -46,7 +46,7 @@ public class GameManager : NetworkBehaviour
         {
             Debug.Log("아이템 생산중...");
 
-            yield return new WaitForSeconds(1f/*Random.Range(30f, 60f)*/);
+            yield return new WaitForSeconds(Random.Range(30f, 60f));
 
             Vector2 spawnPos = RandomPoint();
 

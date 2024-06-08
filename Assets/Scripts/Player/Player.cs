@@ -151,7 +151,7 @@ public class Player : NetworkBehaviour
 
         _HP -= (int)damage;
 
-        _isHurtAble = false;
+        //_isHurtAble = false;
 
         if (_HP <= 0)
         {
@@ -181,7 +181,7 @@ public class Player : NetworkBehaviour
             yield return new WaitForSeconds(0.3f);            
         }
 
-        _isHurtAble = true;
+        //_isHurtAble = true;
         yield break;
     }
 

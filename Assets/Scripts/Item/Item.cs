@@ -12,7 +12,6 @@ public enum ItemType
 
 public class Item : NetworkBehaviour
 {
-    [SerializeField]
     protected ItemType Type;
     [SerializeField]
     protected float Speed = 1f;
