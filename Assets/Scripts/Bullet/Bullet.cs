@@ -6,9 +6,7 @@ using UnityEngine;
 
 public class Bullet : NetworkBehaviour
 {
-    [SerializeField] private float maxShotDelay = 1.0f;
-    [SerializeField] private float curShotDelay = 0;
-    [SerializeField] private float Speed = 500f;
+    [SerializeField] private float Speed = 25f;
     [SerializeField] 
     protected int ATKPower;
 
@@ -59,7 +57,7 @@ public class Bullet : NetworkBehaviour
         {
             if(collision.GetComponent<NetworkIdentity>() == owner) return;
             collision.GetComponent<Player>().Hurt(ATKPower);
-
+            CancelInvoke();
             DestorySelf();
         }
     }

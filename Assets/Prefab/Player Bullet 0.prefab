@@ -113,7 +113,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16666667, y: 0.29166666}
+  m_Size: {x: 0.28, y: 0.45}
   m_EdgeRadius: 0
 --- !u!50 &1734718686794375663
 Rigidbody2D:
@@ -151,9 +151,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  bulletLayer:
-    serializedVersion: 2
-    m_Bits: 448
   Speed: 25
   ATKPower: 1
 --- !u!114 &5705640306778653737

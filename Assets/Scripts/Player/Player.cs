@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Org.BouncyCastle.Crypto.Macs;
+using UnityEngine.UIElements;
 
 public class Player : NetworkBehaviour
 {
+    [SerializeField] private float maxShotDelay = 0.2f;
+    [SerializeField] private float curShotDelay;
+
     [SerializeField] private float Speed = 3f;
 
     [SerializeField] private Transform _attackPos;
@@ -40,11 +44,14 @@ public class Player : NetworkBehaviour
         _spawnPos = GameManager.Instance.RandomPoint();
 
         transform.position = _spawnPos;
+        curShotDelay = maxShotDelay;
     }
 
     // Update is called once per frame
     void Update()
     {
+        AttackDelay();
+
         if (!Application.isFocused) return;  
         if(!this.isLocalPlayer) return;
 
@@ -55,20 +62,46 @@ public class Player : NetworkBehaviour
         Attack();
     }
 
+    private void AttackDelay()
+    {
+        curShotDelay = Mathf.Clamp(curShotDelay += Time.deltaTime, 0, maxShotDelay);
+    }
+
     private void Attack()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (curShotDelay < maxShotDelay) return;
+        if (Input.GetMouseButton(0))
         {
             CommandAttack();
+            curShotDelay = 0;
         }
     }
 
     [Command]
     private void CommandAttack()
     {
-        GameObject bullet = Instantiate(GameManager.Instance.Bullet[Power], _attackPos.position, _attackPos.rotation);
-        bullet.GetComponent<Bullet>().SetOwner(this.connectionToClient);
-        NetworkServer.Spawn(bullet);
+        switch (Power)
+        {
+            case 0:
+                GameObject bullet = Instantiate(GameManager.Instance.Bullet[0], _attackPos.position, _attackPos.rotation);
+                bullet.GetComponent<Bullet>().SetOwner(this.connectionToClient);
+                NetworkServer.Spawn(bullet);
+                break;
+            case 1:
+                GameObject bullet_L = Instantiate(GameManager.Instance.Bullet[0], _attackPos.TransformPoint(_attackPos.localPosition + new Vector3(-0.3f, 0, 0)), _attackPos.rotation);
+                GameObject bullet_R = Instantiate(GameManager.Instance.Bullet[0], _attackPos.TransformPoint(_attackPos.localPosition + new Vector3(0.3f, 0, 0)), _attackPos.rotation);
+                bullet_L.GetComponent<Bullet>().SetOwner(this.connectionToClient);
+                bullet_R.GetComponent<Bullet>().SetOwner(this.connectionToClient);
+                NetworkServer.Spawn(bullet_L);
+                NetworkServer.Spawn(bullet_R);
+                break;
+            case 2:
+                GameObject Bigbullet = Instantiate(GameManager.Instance.Bullet[1], _attackPos.position, _attackPos.rotation);
+                Bigbullet.GetComponent<Bullet>().SetOwner(this.connectionToClient);
+                NetworkServer.Spawn(Bigbullet);
+                break;
+        }
+        
 
         RpcAttack();
     }
@@ -79,6 +112,10 @@ public class Player : NetworkBehaviour
 
     }
 
+    public void PowerUp()
+    {
+        Power++;
+    }
 
     private void Move()
     {
