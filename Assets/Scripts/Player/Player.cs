@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-using Org.BouncyCastle.Crypto.Macs;
-using UnityEngine.UIElements;
 
 public class Player : NetworkBehaviour
 {
@@ -101,7 +99,9 @@ public class Player : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             _DashCount--;
-            defaultSpeed = Speed;            
+            GameManager.Instance.GetUI.Changed_DashCount(_DashCount);
+
+            defaultSpeed = Speed;
             RpcDash();
         }
     }
@@ -112,6 +112,7 @@ public class Player : NetworkBehaviour
         //대쉬 애니메이션
 
         //애니메이션이 없는 관계로 Invoke로 임시
+        _isHurtAble = false;
         Speed = 10f;
         Invoke(nameof(DashEnd), 0.5f);
     }
@@ -119,6 +120,7 @@ public class Player : NetworkBehaviour
     public void DashEnd()
     {
         Speed = defaultSpeed;
+        _isHurtAble = true;
     }
 
     [Command]
@@ -164,11 +166,13 @@ public class Player : NetworkBehaviour
     public void Healing()
     {
         _HP++;
+        GameManager.Instance.GetUI.Changed_PlayerHP(_HP);
     }
 
     public void DashRecharge()
     {
         _DashCount++;
+        GameManager.Instance.GetUI.Changed_DashCount(_DashCount);
     }
 
     private void Move()
@@ -204,6 +208,7 @@ public class Player : NetworkBehaviour
         if (!_isHurtAble) return;
 
         _HP -= (int)damage;
+        GameManager.Instance.GetUI.Changed_PlayerHP(_HP);
 
         //_isHurtAble = false;
 
@@ -254,6 +259,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcDead()
     {
+        //터지는 애니메이션 실행
         _animator.SetTrigger("Die");
     }
 }

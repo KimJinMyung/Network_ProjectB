@@ -16,6 +16,9 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private List<GameObject> _Bullet;
     [SerializeField] private List<GameObject> _ItemPrefabs;
 
+    [SerializeField] private Player_UI UI;
+    public Player_UI GetUI {  get { return UI; } }
+
     [SerializeField]
     [SyncVar] private bool isGameStart;
 
