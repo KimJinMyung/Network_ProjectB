@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class Bullet : NetworkBehaviour
 {
+    [SerializeField] private float maxShotDelay = 1.0f;
+    [SerializeField] private float curShotDelay = 0;
     [SerializeField] private float Speed = 500f;
     [SerializeField] 
     protected int ATKPower;
@@ -43,19 +45,21 @@ public class Bullet : NetworkBehaviour
     [Server]
     protected virtual void DestorySelf()
     {
-        //gameObject.SetActive(false);
-        //CommandDestorySelf();
         NetworkServer.Destroy(this.gameObject);
     }
 
     [ServerCallback]    //외부에서 트리거 발동 서버에서 처리
     protected void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log("총알");
         //if (collision.gameObject.GetComponent<NetworkConnectionToClient>().identity == owner) return;
+        if (collision.CompareTag("Item")) return;
+
         if (collision.CompareTag("Player"))
         {
             if(collision.GetComponent<NetworkIdentity>() == owner) return;
             collision.GetComponent<Player>().Hurt(ATKPower);
+
             DestorySelf();
         }
     }

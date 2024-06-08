@@ -15,6 +15,7 @@ public class Player : NetworkBehaviour
     [SyncVar]
     private int Power;
 
+    private SpriteRenderer _spriteRenderer;
     private Vector2 _mousePos;
     private float _angle;
 
@@ -23,10 +24,15 @@ public class Player : NetworkBehaviour
 
     private Vector2 _spawnPos;
 
+    private bool _isHurtAble = true;
+
+    private Color HurtEffectColor = new Color(1f, 1f, 1f, 0.5f);
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void OnEnable()
@@ -60,7 +66,7 @@ public class Player : NetworkBehaviour
     [Command]
     private void CommandAttack()
     {
-        GameObject bullet = Instantiate(GameManager.Instance.Bullet[Power-1], _attackPos.position, _attackPos.rotation);
+        GameObject bullet = Instantiate(GameManager.Instance.Bullet[Power], _attackPos.position, _attackPos.rotation);
         bullet.GetComponent<Bullet>().SetOwner(this.connectionToClient);
         NetworkServer.Spawn(bullet);
 
@@ -104,11 +110,42 @@ public class Player : NetworkBehaviour
     [ServerCallback]
     public void Hurt(float damage)
     {
+        if (!_isHurtAble) return;
+
         _HP -= (int)damage;
-        if(_HP <= 0)
+
+        _isHurtAble = false;
+
+        if (_HP <= 0)
         {
             Dead();
         }
+        else
+        {
+            HurtAnimation();
+        }
+    }
+
+    [ClientRpc]
+    private void HurtAnimation()
+    {
+        StartCoroutine(HurtEffect());
+    }
+
+    IEnumerator HurtEffect()
+    {
+        int Count = 0;
+        while (Count <= 5)
+        {
+            Count++;
+            _spriteRenderer.color = HurtEffectColor;
+            yield return new WaitForSeconds(0.3f);
+            _spriteRenderer.color = new Color(1f, 1f, 1f, 1f);
+            yield return new WaitForSeconds(0.3f);            
+        }
+
+        _isHurtAble = true;
+        yield break;
     }
 
     public void Dead()

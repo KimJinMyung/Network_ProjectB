@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 1134961672328471589}
   - component: {fileID: 5514376799678614367}
   - component: {fileID: 2049620618220781341}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -146,7 +146,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 1}
+  m_Size: {x: 0.95, y: 1.6}
   m_EdgeRadius: 0
 --- !u!114 &1134961672328471587
 MonoBehaviour:
@@ -165,8 +165,8 @@ MonoBehaviour:
   syncInterval: 0
   Speed: 2.5
   _attackPos: {fileID: 2054383192405325239}
-  _Bullet: {fileID: 1734718686794375662, guid: fa5e034d6b0a37a4197958ffc6d05030, type: 3}
   _HP: 5
+  Power: 0
 --- !u!114 &1134961672328471586
 MonoBehaviour:
   m_ObjectHideFlags: 0
