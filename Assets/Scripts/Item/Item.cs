@@ -8,6 +8,7 @@ public enum ItemType
 {
     Power,
     Heal,
+    Dash
 }
 
 public class Item : NetworkBehaviour
@@ -34,11 +35,6 @@ public class Item : NetworkBehaviour
     protected virtual void DestorySelf()
     {
         NetworkServer.Destroy(this.gameObject);
-    }
-
-    private void Update()
-    {
-        Debug.Log(_rb.velocity);
     }
 
     [ServerCallback]

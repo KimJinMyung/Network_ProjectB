@@ -10,14 +10,25 @@ public class Player : NetworkBehaviour
     [SerializeField] private float maxShotDelay = 0.2f;
     [SerializeField] private float curShotDelay;
 
-    [SerializeField] private float Speed = 3f;
+    [SerializeField]
+    //[SyncVar]
+    private float Speed = 2.5f;
+    //[SyncVar]
+    private float defaultSpeed;
 
     [SerializeField] private Transform _attackPos;
-    [SerializeField] private int _HP = 5;
+
+    [SerializeField]
+    [SyncVar]
+    private int _HP = 5;
 
     [SerializeField]
     [SyncVar]
     private int Power;
+
+    [ShowInInspector]
+    [SyncVar]
+    private int _DashCount;
 
     private SpriteRenderer _spriteRenderer;
     private Vector2 _mousePos;
@@ -28,6 +39,7 @@ public class Player : NetworkBehaviour
 
     private Vector2 _spawnPos;
 
+    [SyncVar]
     private bool _isHurtAble = true;
 
     private Color HurtEffectColor = new Color(1f, 1f, 1f, 0.5f);
@@ -45,6 +57,9 @@ public class Player : NetworkBehaviour
 
         transform.position = _spawnPos;
         curShotDelay = maxShotDelay;
+        _DashCount = 4;
+
+        defaultSpeed = Speed;
     }
 
     // Update is called once per frame
@@ -59,6 +74,7 @@ public class Player : NetworkBehaviour
         Move();
         MouseRotation();
 
+        Dash();
         Attack();
     }
 
@@ -75,6 +91,34 @@ public class Player : NetworkBehaviour
             CommandAttack();
             curShotDelay = 0;
         }
+    }
+
+    [Command]
+    private void Dash()
+    {
+        if(_DashCount <=  0) return;
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            _DashCount--;
+            defaultSpeed = Speed;            
+            RpcDash();
+        }
+    }
+
+    [ClientRpc]
+    private void RpcDash()
+    {
+        //대쉬 애니메이션
+
+        //애니메이션이 없는 관계로 Invoke로 임시
+        Speed = 10f;
+        Invoke(nameof(DashEnd), 0.5f);
+    }
+
+    public void DashEnd()
+    {
+        Speed = defaultSpeed;
     }
 
     [Command]
@@ -115,6 +159,16 @@ public class Player : NetworkBehaviour
     public void PowerUp()
     {
         Power++;
+    }
+
+    public void Healing()
+    {
+        _HP++;
+    }
+
+    public void DashRecharge()
+    {
+        _DashCount++;
     }
 
     private void Move()

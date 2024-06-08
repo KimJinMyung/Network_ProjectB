@@ -1,7 +1,6 @@
 using Mirror;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class GameManager : NetworkBehaviour
@@ -44,8 +43,6 @@ public class GameManager : NetworkBehaviour
 
         while (isGameStart)
         {
-            Debug.Log("아이템 생산중...");
-
             yield return new WaitForSeconds(Random.Range(30f, 60f));
 
             Vector2 spawnPos = RandomPoint();
