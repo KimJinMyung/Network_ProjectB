@@ -37,19 +37,27 @@ public class Item : NetworkBehaviour
         NetworkServer.Destroy(this.gameObject);
     }
 
+    private void Update()
+    {
+        Debug.Log(_rb.velocity);
+    }
+
     [ServerCallback]
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Wall"))
         {
-            Vector2 normal = (collision.bounds.center - transform.position).normalized;
+            //충돌 지점
+            Vector2 collisionPoint = collision.ClosestPoint(transform.position);
+            
+            Vector2 normal = (collisionPoint - (Vector2)transform.position).normalized;
 
             Vector2 incomingVelocity = _rb.velocity;
             Vector2 reflection = Vector2.Reflect(incomingVelocity, normal);
 
-            float randomAngle = Random.Range(-30f, 30f);
-            reflection = Quaternion.Euler(0,0,randomAngle) * reflection;
-
+            //float randomAngle = Random.Range(-30f, 30f);
+            //reflection = Quaternion.Euler(0,0,randomAngle) * reflection;
+            
             ReflectItem(reflection);
         }
 
@@ -66,7 +74,6 @@ public class Item : NetworkBehaviour
     private void ReflectItem(Vector2 dir)
     {
         _rb.velocity = dir.normalized * Speed;
-        Debug.Log("튕기는 중...");
     }
 
 }
