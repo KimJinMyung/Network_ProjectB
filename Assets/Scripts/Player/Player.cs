@@ -40,6 +40,8 @@ public class Player : NetworkBehaviour
     [SyncVar]
     private bool _isHurtAble = true;
 
+    private bool _isDashing;
+
     private Color HurtEffectColor = new Color(1f, 1f, 1f, 0.5f);
 
     private void Awake()
@@ -47,6 +49,8 @@ public class Player : NetworkBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+
+        defaultSpeed = Speed;
     }
 
     private void OnEnable()
@@ -57,7 +61,9 @@ public class Player : NetworkBehaviour
         curShotDelay = maxShotDelay;
         _DashCount = 4;
 
-        defaultSpeed = Speed;
+        Speed = defaultSpeed;
+
+        _HP = 5;
     }
 
     // Update is called once per frame
@@ -91,19 +97,27 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [Command]
+    //[Command]
     private void Dash()
     {
+        if (_isDashing) return;
         if(_DashCount <=  0) return;
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
+            _isDashing = true;
             _DashCount--;
             GameManager.Instance.GetUI.Changed_DashCount(_DashCount);
 
-            defaultSpeed = Speed;
-            RpcDash();
+            CommandDash();
         }
+    }
+
+    [Command]
+    private void CommandDash()
+    {
+        defaultSpeed = Speed;
+        RpcDash();
     }
 
     [ClientRpc]
@@ -121,6 +135,7 @@ public class Player : NetworkBehaviour
     {
         Speed = defaultSpeed;
         _isHurtAble = true;
+        _isDashing = false;
     }
 
     [Command]
@@ -205,13 +220,18 @@ public class Player : NetworkBehaviour
     [ServerCallback]
     public void Hurt(float damage)
     {
-        if (!_isHurtAble) return;
+        if (!_isHurtAble) return;        
 
         _HP -= (int)damage;
-        GameManager.Instance.GetUI.Changed_PlayerHP(_HP);
+        Debug.LogWarning(_HP);        
 
         //_isHurtAble = false;
 
+        CommandHurt();
+    }
+
+    private void CommandHurt()
+    {
         if (_HP <= 0)
         {
             Dead();
@@ -225,6 +245,9 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void HurtAnimation()
     {
+        if(isLocalPlayer)
+            GameManager.Instance.GetUI.Changed_PlayerHP(_HP);
+
         StartCoroutine(HurtEffect());
     }
 
@@ -247,6 +270,7 @@ public class Player : NetworkBehaviour
     public void Dead()
     {
         CommandDead();
+        
     }
 
     [Command]

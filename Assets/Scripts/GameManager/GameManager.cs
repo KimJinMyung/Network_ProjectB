@@ -15,7 +15,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private Transform GameMap;
     [SerializeField] private List<GameObject> _Bullet;
     [SerializeField] private List<GameObject> _ItemPrefabs;
-
+    [SerializeField] private GameObject Main_GameUI;
     [SerializeField] private Player_UI UI;
     public Player_UI GetUI {  get { return UI; } }
 
@@ -25,6 +25,18 @@ public class GameManager : NetworkBehaviour
     [SyncVar] private bool isSpawning;
 
     public List<GameObject> Bullet { get { return _Bullet; } }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        Main_GameUI.gameObject.SetActive(true);
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        Main_GameUI.gameObject.SetActive(false);
+    }
 
     public Vector2 RandomPoint()
     {

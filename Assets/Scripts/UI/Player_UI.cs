@@ -9,7 +9,7 @@ public class Player_UI : MonoBehaviour
     [SerializeField] List<Image> Player_DashCount;
 
     public void Changed_PlayerHP(int HP)
-    {
+    {        
         ResetList(Player_HP);
         int index = 0;
         foreach (var item in Player_HP)

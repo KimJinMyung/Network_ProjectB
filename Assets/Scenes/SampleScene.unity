@@ -352,7 +352,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &499102294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -676,11 +676,11 @@ RectTransform:
   m_Father: {fileID: 499102297}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.000030517578, y: 100}
   m_SizeDelta: {x: 300, y: 100}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &962561297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -694,7 +694,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.15294118}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1159,11 +1159,11 @@ RectTransform:
   m_Father: {fileID: 499102297}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.000030517578, y: 0}
   m_SizeDelta: {x: 300, y: 100}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &1550344060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1442,6 +1442,7 @@ GameObject:
   - component: {fileID: 1944338744}
   - component: {fileID: 1944338743}
   - component: {fileID: 1944338742}
+  - component: {fileID: 1944338746}
   m_Layer: 0
   m_Name: MyNetworkManager
   m_TagString: Untagged
@@ -1556,6 +1557,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1944338746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1944338741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc654f29862fc2643b948f772ebb9e68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: {r: 1, g: 1, b: 1, a: 1}
+  padding: 2
+  width: 150
+  height: 25
 --- !u!1 &1961179557
 GameObject:
   m_ObjectHideFlags: 0
@@ -1597,6 +1614,8 @@ MonoBehaviour:
   - {fileID: 2255932258455458052, guid: fda3d0f392122164fb5e055f19c14326, type: 3}
   - {fileID: 330199302426246350, guid: 862a24370948c0a4484a46e57abeb0d0, type: 3}
   - {fileID: 970020905283273990, guid: 5de60daae9482a74087f2c3b5c804edf, type: 3}
+  Main_GameUI: {fileID: 499102293}
+  UI: {fileID: 499102298}
   isGameStart: 0
 --- !u!4 &1961179559
 Transform:
