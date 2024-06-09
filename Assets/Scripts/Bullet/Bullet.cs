@@ -27,7 +27,7 @@ public class Bullet : NetworkBehaviour
         SetATKPower();
         //transform.position = transform.up * Speed * Time.deltaTime;
         rb.AddForce(transform.up * Speed, ForceMode2D.Impulse);
-        Invoke(nameof(DestorySelf), 3f);
+        Invoke(nameof(DestorySelf), 1f);
     }
 
     public void SetOwner(NetworkConnectionToClient conn)

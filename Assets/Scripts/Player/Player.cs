@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using Unity.VisualScripting;
 
 public class Player : NetworkBehaviour
 {
@@ -39,8 +40,12 @@ public class Player : NetworkBehaviour
 
     [SyncVar]
     private bool _isHurtAble = true;
+    [SyncVar]
+    private bool _isDead;
 
     private bool _isDashing;
+
+
 
     private Color HurtEffectColor = new Color(1f, 1f, 1f, 0.5f);
 
@@ -59,11 +64,16 @@ public class Player : NetworkBehaviour
 
         transform.position = _spawnPos;
         curShotDelay = maxShotDelay;
+
+        _isDead = false;
+
         _DashCount = 4;
+        GameManager.Instance.GetUI.Changed_DashCount(_DashCount);
 
         Speed = defaultSpeed;
 
         _HP = 5;
+        GameManager.Instance.GetUI.Changed_PlayerHP(_HP);
     }
 
     // Update is called once per frame
@@ -221,6 +231,7 @@ public class Player : NetworkBehaviour
     public void Hurt(float damage)
     {
         if (!_isHurtAble) return;        
+        if(_isDead) return;
 
         _HP -= (int)damage;
         Debug.LogWarning(_HP);
@@ -246,8 +257,8 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void HurtAnimation(int curHP)
     {
-        if(isLocalPlayer)
-        GameManager.Instance.GetUI.Changed_PlayerHP(curHP);
+        //if(isLocalPlayer)
+        //GameManager.Instance.GetUI.Changed_PlayerHP(curHP);
 
         StartCoroutine(HurtEffect());
     }
@@ -270,21 +281,52 @@ public class Player : NetworkBehaviour
 
     public void Dead()
     {
-        CommandDead();
-        
+        _isDead = true;
+        CommandDead();      
     }
 
     [Command]
     private void CommandDead()
     {
-        NetworkServer.Destroy(this.gameObject);
         RpcDead();
     }
 
     [ClientRpc]
     private void RpcDead()
     {
+        if (isLocalPlayer)
+            GameManager.Instance.GetUI.Changed_PlayerHP(_HP);
+
         //터지는 애니메이션 실행
         _animator.SetTrigger("Die");
+    }
+
+    public void EndDieAnimation()
+    {
+        if (isServer)
+        {
+            ServerEndDieAnimation();
+        }
+        else
+        {
+            CmdEndDieAnimation();
+        }
+    }
+
+    [Command]
+    private void CmdEndDieAnimation()
+    {
+        ServerEndDieAnimation();
+    }
+
+    [Server]
+    private void ServerEndDieAnimation()
+    {
+        NetworkServer.Destroy(this.gameObject);
+
+        if (isLocalPlayer)
+        {
+             connectionToClient.Disconnect();
+        }
     }
 }
