@@ -217,36 +217,37 @@ public class Player : NetworkBehaviour
         Camera.main.transform.position = transform.position + new Vector3(0,0, -15f);
     }
 
-    [ServerCallback]
+    [Server]
     public void Hurt(float damage)
     {
         if (!_isHurtAble) return;        
 
         _HP -= (int)damage;
-        Debug.LogWarning(_HP);        
+        Debug.LogWarning(_HP);
 
         //_isHurtAble = false;
 
-        CommandHurt();
-    }
-
-    private void CommandHurt()
-    {
         if (_HP <= 0)
         {
             Dead();
         }
         else
         {
-            HurtAnimation();
+            HurtAnimation(_HP);
         }
     }
 
+    [Command]
+    private void CommandHurt(float damage)
+    {
+        Hurt(damage);
+    }
+
     [ClientRpc]
-    private void HurtAnimation()
+    private void HurtAnimation(int curHP)
     {
         if(isLocalPlayer)
-            GameManager.Instance.GetUI.Changed_PlayerHP(_HP);
+        GameManager.Instance.GetUI.Changed_PlayerHP(curHP);
 
         StartCoroutine(HurtEffect());
     }

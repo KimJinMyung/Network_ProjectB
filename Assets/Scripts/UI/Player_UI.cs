@@ -5,8 +5,11 @@ using UnityEngine.UI;
 
 public class Player_UI : MonoBehaviour
 {
-    [SerializeField] List<Image> Player_HP;
-    [SerializeField] List<Image> Player_DashCount;
+    [SerializeField]
+    List<Image> Player_HP;
+
+    [SerializeField] 
+    List<Image> Player_DashCount;
 
     public void Changed_PlayerHP(int HP)
     {        
