@@ -73,17 +73,16 @@ public class Player : NetworkBehaviour
 
         _HP = 5;
         GameManager.Instance.GetUI.Changed_PlayerHP(_HP);
-
-        Debug.Log(connectionToClient.ToString());
     }
 
     // Update is called once per frame
     void Update()
     {
+
         AttackDelay();
 
-        if (!Application.isFocused) return;  
-        if(!this.isLocalPlayer) return;
+        if (!Application.isFocused) return;
+        if (!this.isLocalPlayer) return;
 
         FollowCamera();
         Move();
@@ -112,7 +111,7 @@ public class Player : NetworkBehaviour
     private void Dash()
     {
         if (_isDashing) return;
-        if(_DashCount <=  0) return;
+        if (_DashCount <= 0) return;
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
@@ -173,7 +172,7 @@ public class Player : NetworkBehaviour
                 NetworkServer.Spawn(Bigbullet);
                 break;
         }
-        
+
 
         RpcAttack();
     }
@@ -210,7 +209,7 @@ public class Player : NetworkBehaviour
 
         _rb.velocity = ((transform.up * v + transform.right * h) * Speed);
 
-        if(Input.GetButtonDown("Horizontal") || Input.GetButtonUp("Horizontal"))
+        if (Input.GetButtonDown("Horizontal") || Input.GetButtonUp("Horizontal"))
             _animator.SetInteger("Input", (int)h);
     }
 
@@ -225,14 +224,14 @@ public class Player : NetworkBehaviour
 
     private void FollowCamera()
     {
-        Camera.main.transform.position = transform.position + new Vector3(0,0, -15f);
+        Camera.main.transform.position = transform.position + new Vector3(0, 0, -15f);
     }
 
     [Server]
     public void Hurt(float damage)
     {
-        if (!_isHurtAble) return;        
-        if(_isDead) return;
+        if (!_isHurtAble) return;
+        if (_isDead) return;
 
         _HP -= (int)damage;
         Debug.LogWarning(_HP);
@@ -275,7 +274,7 @@ public class Player : NetworkBehaviour
             _spriteRenderer.color = HurtEffectColor;
             yield return new WaitForSeconds(0.3f);
             _spriteRenderer.color = new Color(1f, 1f, 1f, 1f);
-            yield return new WaitForSeconds(0.3f);            
+            yield return new WaitForSeconds(0.3f);
         }
 
         //_isHurtAble = true;
@@ -290,8 +289,8 @@ public class Player : NetworkBehaviour
 
     [ClientRpc]
     private void RpcDead(int HP)
-    {       
-        if(isLocalPlayer)
+    {
+        if (isLocalPlayer)
             GameManager.Instance.GetUI.Changed_PlayerHP(HP);
         //터지는 애니메이션 실행
         _animator.SetTrigger("Die");
@@ -309,7 +308,6 @@ public class Player : NetworkBehaviour
     private void bb()
     {
         aa();
-        Debug.Log("bb");
     }
 
     [ClientRpc]
@@ -318,17 +316,23 @@ public class Player : NetworkBehaviour
         Debug.Log("aa");
         if (isLocalPlayer)
         {
+
             if (!isServer)
             {
-                //connectionToClient.Disconnect();
+                DisconnectThisClient();
             }
-            else
-            {
-                NetworkServer.Destroy(gameObject);
-            }
+
+            NetworkServer.Destroy(gameObject);
         }
         Debug.Log("aa_End");
     }
+
+    [Command]
+    private void DisconnectThisClient()
+    {
+        connectionToClient.Disconnect();
+    }
+
 
     //[Server]
     //private void ServerEndDieAnimation()
