@@ -240,7 +240,9 @@ public class Player : NetworkBehaviour
 
         if (_HP <= 0)
         {
-            Dead();
+            _HP = 0;
+            _isDead = true;
+            Dead(_HP);
         }
         else
         {
@@ -257,8 +259,8 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void HurtAnimation(int curHP)
     {
-        //if(isLocalPlayer)
-        //GameManager.Instance.GetUI.Changed_PlayerHP(curHP);
+        if (isLocalPlayer)
+            GameManager.Instance.GetUI.Changed_PlayerHP(curHP);
 
         StartCoroutine(HurtEffect());
     }
@@ -279,54 +281,39 @@ public class Player : NetworkBehaviour
         yield break;
     }
 
-    public void Dead()
-    {
-        _isDead = true;
-        CommandDead();      
-    }
 
-    [Command]
-    private void CommandDead()
+    private void Dead(int HP)
     {
-        RpcDead();
+        RpcDead(HP);
     }
 
     [ClientRpc]
-    private void RpcDead()
+    private void RpcDead(int HP)
     {
-        if (isLocalPlayer)
-            GameManager.Instance.GetUI.Changed_PlayerHP(_HP);
-
+        GameManager.Instance.GetUI.Changed_PlayerHP(HP);
+        StopCoroutine(HurtEffect());
         //터지는 애니메이션 실행
         _animator.SetTrigger("Die");
     }
 
+    [ClientRpc]
     public void EndDieAnimation()
     {
-        if (isServer)
+        if(isLocalPlayer)
         {
-            ServerEndDieAnimation();
-        }
-        else
-        {
-            CmdEndDieAnimation();
+            NetworkServer.Destroy(gameObject);
+
+            if (!isServer)
+            {
+                connectionToClient.Disconnect();
+            }
         }
     }
 
-    [Command]
-    private void CmdEndDieAnimation()
-    {
-        ServerEndDieAnimation();
-    }
-
-    [Server]
-    private void ServerEndDieAnimation()
-    {
-        NetworkServer.Destroy(this.gameObject);
-
-        if (isLocalPlayer)
-        {
-             connectionToClient.Disconnect();
-        }
-    }
+    //[Server]
+    //private void ServerEndDieAnimation()
+    //{
+    //    NetworkServer.Destroy(this.gameObject);
+    //    connectionToClient.Disconnect();
+    //}
 }
