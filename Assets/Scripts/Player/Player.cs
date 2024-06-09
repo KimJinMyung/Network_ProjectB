@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-using Unity.VisualScripting;
 
 public class Player : NetworkBehaviour
 {
@@ -74,6 +73,8 @@ public class Player : NetworkBehaviour
 
         _HP = 5;
         GameManager.Instance.GetUI.Changed_PlayerHP(_HP);
+
+        Debug.Log(connectionToClient.ToString());
     }
 
     // Update is called once per frame
@@ -289,25 +290,44 @@ public class Player : NetworkBehaviour
 
     [ClientRpc]
     private void RpcDead(int HP)
-    {
-        GameManager.Instance.GetUI.Changed_PlayerHP(HP);
-        StopCoroutine(HurtEffect());
+    {       
+        if(isLocalPlayer)
+            GameManager.Instance.GetUI.Changed_PlayerHP(HP);
         //터지는 애니메이션 실행
         _animator.SetTrigger("Die");
     }
 
-    [ClientRpc]
+
     public void EndDieAnimation()
     {
-        if(isLocalPlayer)
-        {
-            NetworkServer.Destroy(gameObject);
+        Debug.LogWarning("애니메이션 종료..");
 
+        bb();
+    }
+
+    [Command]
+    private void bb()
+    {
+        aa();
+        Debug.Log("bb");
+    }
+
+    [ClientRpc]
+    private void aa()
+    {
+        Debug.Log("aa");
+        if (isLocalPlayer)
+        {
             if (!isServer)
             {
-                connectionToClient.Disconnect();
+                //connectionToClient.Disconnect();
+            }
+            else
+            {
+                NetworkServer.Destroy(gameObject);
             }
         }
+        Debug.Log("aa_End");
     }
 
     //[Server]

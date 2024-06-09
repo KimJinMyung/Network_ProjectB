@@ -169,7 +169,6 @@ MonoBehaviour:
   _attackPos: {fileID: 2054383192405325239}
   _HP: 5
   Power: 0
-  _DashCount: 3
 --- !u!114 &1134961672328471586
 MonoBehaviour:
   m_ObjectHideFlags: 0
