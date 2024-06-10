@@ -165,10 +165,12 @@ MonoBehaviour:
   syncInterval: 0
   maxShotDelay: 0.2
   curShotDelay: 0
+  RespawnTime: 3
+  PowerITem: {fileID: 2255932258455458052, guid: fda3d0f392122164fb5e055f19c14326, type: 3}
   Speed: 2.5
   _attackPos: {fileID: 2054383192405325239}
   _HP: 5
-  Power: 0
+  _power: 0
 --- !u!114 &1134961672328471586
 MonoBehaviour:
   m_ObjectHideFlags: 0

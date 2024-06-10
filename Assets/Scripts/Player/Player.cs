@@ -9,6 +9,8 @@ public class Player : NetworkBehaviour
     [SerializeField] private float curShotDelay;
     [SerializeField] private float RespawnTime = 3f;
 
+    [SerializeField] private GameObject PowerITem;
+
     [SerializeField]
     //[SyncVar]
     private float Speed = 2.5f;
@@ -23,7 +25,7 @@ public class Player : NetworkBehaviour
 
     [SerializeField]
     [SyncVar]
-    private int Power;
+    private int _power;
 
     [ShowInInspector]
     [SyncVar]
@@ -64,6 +66,10 @@ public class Player : NetworkBehaviour
 
         transform.position = _spawnPos;
         curShotDelay = maxShotDelay;
+
+        _spriteRenderer.color = new Color(1f, 1f, 1f, 1f);
+
+        this._power = 0;
 
         _isDead = false;
 
@@ -152,7 +158,7 @@ public class Player : NetworkBehaviour
     [Command]
     private void CommandAttack()
     {
-        switch (Power)
+        switch (_power)
         {
             case 0:
                 GameObject bullet = Instantiate(GameManager.Instance.Bullet[0], _attackPos.position, _attackPos.rotation);
@@ -186,7 +192,7 @@ public class Player : NetworkBehaviour
 
     public void PowerUp()
     {
-        Power++;
+        _power++;
     }
 
     public void Healing()
@@ -292,7 +298,16 @@ public class Player : NetworkBehaviour
     private void RpcDead(int HP)
     {
         if (isLocalPlayer)
+        {
             GameManager.Instance.GetUI.Changed_PlayerHP(HP);
+            
+            for (int i = 0; i < this._power; i++)
+            {
+                Instantiate(PowerITem, transform.position, transform.rotation);
+            }
+        }
+            
+
         //터지는 애니메이션 실행
         _animator.SetTrigger("Die");
     }
