@@ -7,6 +7,7 @@ public class Player : NetworkBehaviour
 {
     [SerializeField] private float maxShotDelay = 0.2f;
     [SerializeField] private float curShotDelay;
+    [SerializeField] private float RespawnTime = 3f;
 
     [SerializeField]
     //[SyncVar]
@@ -299,32 +300,52 @@ public class Player : NetworkBehaviour
 
     public void EndDieAnimation()
     {
-        Debug.LogWarning("애니메이션 종료..");
-
+        this.gameObject.SetActive(false);
         bb();
     }
 
     [Command]
     private void bb()
-    {
+    {               
+        
         aa();
     }
 
     [ClientRpc]
     private void aa()
     {
-        Debug.Log("aa");
+        //if (isLocalPlayer)
+        //{
+
+        //    if (!isServer)
+        //    {
+        //        DisconnectThisClient();
+        //    }
+
+        //    NetworkServer.Destroy(gameObject);
+        //}
+
         if (isLocalPlayer)
-        {
+            Invoke(nameof(Respawn), RespawnTime);
+           // StartCoroutine(Respawn());
+    }
 
-            if (!isServer)
-            {
-                DisconnectThisClient();
-            }
+    private void Respawn()
+    {
+        CMDPlayerActiveOn();
 
-            NetworkServer.Destroy(gameObject);
-        }
-        Debug.Log("aa_End");
+    }
+
+    [Command]
+    private void CMDPlayerActiveOn()
+    {
+        RPCPlayerActive();
+    }
+
+    [ClientRpc]
+    private void RPCPlayerActive()
+    {
+        this.gameObject.SetActive(true);
     }
 
     [Command]
